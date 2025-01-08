@@ -63,7 +63,11 @@ export default function TodoList({
                         className='grid grid-cols-4 items-center text-center'
                     >
                         <span>{index + 1}</span>
-                        <span>{item.text}</span>
+                        <span>
+                            {item.text.length > 16
+                                ? `${item.text.slice(0, 16)}...`
+                                : item.text}
+                        </span>
                         <span
                             className={`px-2 py-1 text-sm font-medium text-white rounded uppercase ${
                                 item.status === 'idle'

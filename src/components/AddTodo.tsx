@@ -20,7 +20,10 @@ type Props = {
 export default function AddTodo({ onAdd, onClose, editingTodo }: Props) {
     const [text, setText] = useState('');
     const [status, setStatus] = useState('idle');
+    const inputRef = useRef<HTMLInputElement | null>(null);
 
+    const isOverLimit = text.length > 40;
+    
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setText(e.target.value);
     };
@@ -33,8 +36,6 @@ export default function AddTodo({ onAdd, onClose, editingTodo }: Props) {
         onClose();
     };
 
-    const inputRef = useRef<HTMLInputElement | null>(null);
-
     useEffect(() => {
         if (editingTodo) {
             setText(editingTodo.text);
@@ -42,6 +43,7 @@ export default function AddTodo({ onAdd, onClose, editingTodo }: Props) {
         }
         inputRef.current?.focus();
     }, [editingTodo]);
+
     return (
         <form onSubmit={handleSubmit} className='w-full py-4 bg-neutral-50'>
             <div className='grid grid-cols-[2fr_4fr_4fr_2fr] items-center text-center gap-3'>
@@ -58,7 +60,9 @@ export default function AddTodo({ onAdd, onClose, editingTodo }: Props) {
                     value={text}
                     onChange={handleChange}
                     ref={inputRef}
-                    className='text-center placeholder-gray-400 border rounded outline-none'
+                    className={`text-center placeholder-gray-400 border rounded outline-none ${
+                        isOverLimit && 'text-red-500'
+                    }`}
                 />
                 <Select
                     value={status}
@@ -80,7 +84,8 @@ export default function AddTodo({ onAdd, onClose, editingTodo }: Props) {
 
                 <button
                     type='submit'
-                    className='px-4 py-2 bg-orange-400 text-white font-medium rounded-lg shadow hover:bg-orange-500 justify-self-center'
+                    disabled={isOverLimit}
+                    className={`px-4 py-2 bg-orange-400 font-medium rounded-lg shadow justify-self-center text-white disabled:bg-gray-300 disabled:text-gray-500 disabled:cursor-not-allowed`}
                 >
                     Save
                 </button>
