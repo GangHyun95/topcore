@@ -9,21 +9,25 @@ import {
     SelectValue,
 } from '../components/ui/select';
 import { Input } from '../components/ui/input';
-import { TodoType } from './TodoList';
+import { TodoType, useTodoContext } from '../context/TodoContext';
 
 type Props = {
     onAdd: (todo: TodoType) => void;
-    onClose: () => void;
-    editingTodo: TodoType | null;
 };
 
-export default function AddTodo({ onAdd, onClose, editingTodo }: Props) {
+export default function AddTodo({ onAdd }: Props) {
+    const { closeAddTodo, editingTodo, changeEditingTodo } = useTodoContext();
     const [text, setText] = useState('');
     const [status, setStatus] = useState('idle');
     const inputRef = useRef<HTMLInputElement | null>(null);
 
     const isOverLimit = text.length > 40;
-    
+
+    const onClose = () => {
+        changeEditingTodo(null);
+        closeAddTodo();
+    }
+
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setText(e.target.value);
     };
@@ -40,6 +44,8 @@ export default function AddTodo({ onAdd, onClose, editingTodo }: Props) {
         if (editingTodo) {
             setText(editingTodo.text);
             setStatus(editingTodo.status);
+        } else {
+            setText('');
         }
         inputRef.current?.focus();
     }, [editingTodo]);

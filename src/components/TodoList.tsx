@@ -1,27 +1,18 @@
 import { useState } from 'react';
 import { Settings } from 'lucide-react';
 import AddTodo from './AddTodo';
+import { TodoType, useTodoContext } from '../context/TodoContext';
 
-type Props = {
-    isAddTodo: boolean;
-    openAddTodo: () => void;
-    closeAddTodo: () => void;
-};
-
-export type TodoType = {
-    id: number;
-    text: string;
-    status: string;
-};
-
-export default function TodoList({
-    isAddTodo,
-    openAddTodo,
-    closeAddTodo,
-}: Props) {
+export default function TodoList() {
+    const {
+        isAddTodo,
+        openAddTodo,
+        editingTodo,
+        changeEditingTodo,
+    } = useTodoContext();
+    
     const [openMenuId, setOpenMenuId] = useState<number | null>(null);
     const [todos, setTodos] = useState<TodoType[]>([]);
-    const [editingTodo, setEditingTodo] = useState<TodoType | null>(null);
 
     const toggleMenu = (id: number) => {
         setOpenMenuId((prev) => (prev === id ? null : id));
@@ -32,21 +23,22 @@ export default function TodoList({
     const handleAdd = (todo: TodoType) => {
         if (editingTodo) {
             setTodos((prev) =>
-                prev.map((t) => (t.id === editingTodo.id ? todo : t))
+                prev.map((t) => (t.id === editingTodo?.id ? todo : t))
             );
-            setEditingTodo(null);
         } else {
             setTodos((prev) => [...prev, todo]);
         }
     };
 
     const handleEdit = (todo: TodoType) => {
-        setEditingTodo(todo);
+        changeEditingTodo(todo);
         openAddTodo();
     };
 
-    const handleDelete = (deleted: TodoType) =>
+    const handleDelete = (deleted: TodoType) => {
         setTodos(todos.filter((todo) => todo.id !== deleted.id));
+        changeEditingTodo(null);
+    };
 
     return (
         <section className='flex h-full min-h-0 flex-col'>
@@ -123,13 +115,7 @@ export default function TodoList({
                     </li>
                 ))}
             </ul>
-            {isAddTodo && (
-                <AddTodo
-                    onAdd={handleAdd}
-                    onClose={closeAddTodo}
-                    editingTodo={editingTodo}
-                />
-            )}
+            {isAddTodo && <AddTodo onAdd={handleAdd} />}
         </section>
     );
 }
