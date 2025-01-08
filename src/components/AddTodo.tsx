@@ -11,22 +11,27 @@ import {
 import { Input } from '../components/ui/input';
 import { TodoType, useTodoContext } from '../context/TodoContext';
 
-type Props = {
-    onAdd: (todo: TodoType) => void;
-};
-
-export default function AddTodo({ onAdd }: Props) {
-    const { closeAddTodo, editingTodo, changeEditingTodo } = useTodoContext();
+export default function AddTodo() {
+    const { setTodos, closeAddTodo, editingTodo, changeEditingTodo } = useTodoContext();
     const [text, setText] = useState('');
     const [status, setStatus] = useState('idle');
     const inputRef = useRef<HTMLInputElement | null>(null);
-
     const isOverLimit = text.length > 40;
 
     const onClose = () => {
         changeEditingTodo(null);
         closeAddTodo();
     }
+
+    const handleAdd = (todo: TodoType) => {
+        if (editingTodo) {
+            setTodos((prev) =>
+                prev.map((t) => (t.id === editingTodo?.id ? todo : t))
+            );
+        } else {
+            setTodos((prev) => [...prev, todo]);
+        }
+    };
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setText(e.target.value);
@@ -35,7 +40,7 @@ export default function AddTodo({ onAdd }: Props) {
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         if (text.trim().length === 0) return;
-        onAdd({ id: Date.now(), text: text, status: status });
+        handleAdd({ id: Date.now(), text: text, status: status });
         setText('');
         onClose();
     };

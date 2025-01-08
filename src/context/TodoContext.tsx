@@ -7,6 +7,8 @@ export type TodoType = {
 };
 
 type TodoContextType = {
+    todos: TodoType[];
+    setTodos: React.Dispatch<React.SetStateAction<TodoType[]>>;
     isAddTodo: boolean;
     editingTodo: TodoType | null;
     openAddTodo: () => void;
@@ -17,6 +19,7 @@ type TodoContextType = {
 const TodoContext = createContext<TodoContextType | undefined>(undefined);
 
 export function TodoProvider({ children }: { children: React.ReactNode }) {
+    const [todos, setTodos] = useState<TodoType[]>([]);
     const [isAddTodo, setIsAddTodo] = useState(false);
     const [editingTodo, setEditingTodo] = useState<TodoType | null>(null);
 
@@ -27,6 +30,8 @@ export function TodoProvider({ children }: { children: React.ReactNode }) {
     return (
         <TodoContext.Provider
             value={{
+                todos,
+                setTodos,
                 isAddTodo,
                 editingTodo,
                 openAddTodo,
