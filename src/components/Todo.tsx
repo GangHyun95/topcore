@@ -2,8 +2,14 @@ import { Settings } from 'lucide-react';
 import { TodoType, useTodoContext } from '../context/TodoContext';
 import { useState } from 'react';
 
-export default function Todo({ todo, index }: { todo: TodoType, index: number }) {
-    const { todos, setTodos, openAddTodo, changeEditingTodo } = useTodoContext();
+export default function Todo({
+    todo,
+    index,
+}: {
+    todo: TodoType;
+    index: number;
+}) {
+    const { openAddTodo, changeEditingTodo, openModal } = useTodoContext();
 
     const [openMenuId, setOpenMenuId] = useState<number | null>(null);
     const toggleMenu = (id: number) => {
@@ -16,10 +22,6 @@ export default function Todo({ todo, index }: { todo: TodoType, index: number })
         openAddTodo();
     };
 
-    const handleDelete = (deleted: TodoType) => {
-        setTodos(todos.filter((todo) => todo.id !== deleted.id));
-        changeEditingTodo(null);
-    };
     return (
         <li className='grid grid-cols-4 items-center text-center'>
             <span>{index + 1}</span>
@@ -64,12 +66,8 @@ export default function Todo({ todo, index }: { todo: TodoType, index: number })
                             <li
                                 className='px-4 py-2 hover:bg-gray-100 cursor-pointer'
                                 onClick={() => {
-                                    const confirmed =
-                                        window.confirm('삭제하시겠습니까?');
-                                    if (confirmed) {
-                                        handleDelete(todo);
-                                    }
                                     closeMenu();
+                                    openModal(todo);
                                 }}
                             >
                                 삭제하기

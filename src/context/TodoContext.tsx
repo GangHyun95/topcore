@@ -14,6 +14,10 @@ type TodoContextType = {
     openAddTodo: () => void;
     closeAddTodo: () => void;
     changeEditingTodo: (todo: TodoType | null) => void;
+    isOpenModal: boolean,
+    openModal: (todo: TodoType | null) => void;
+    closeModal: () => void;
+
 };
 
 const TodoContext = createContext<TodoContextType | undefined>(undefined);
@@ -22,10 +26,20 @@ export function TodoProvider({ children }: { children: React.ReactNode }) {
     const [todos, setTodos] = useState<TodoType[]>([]);
     const [isAddTodo, setIsAddTodo] = useState(false);
     const [editingTodo, setEditingTodo] = useState<TodoType | null>(null);
+    const [isOpenModal, setIsOpenModal] = useState(false);
 
     const openAddTodo = () => setIsAddTodo(true);
     const closeAddTodo = () => setIsAddTodo(false);
     const changeEditingTodo = (todo: TodoType | null) => setEditingTodo(todo);
+
+    const openModal = (todo: TodoType | null) => {
+        setIsOpenModal(true);
+        setEditingTodo(todo);
+    }
+    const closeModal = () => {
+        setIsOpenModal(false);
+        setEditingTodo(null);
+    }
 
     return (
         <TodoContext.Provider
@@ -33,10 +47,13 @@ export function TodoProvider({ children }: { children: React.ReactNode }) {
                 todos,
                 setTodos,
                 isAddTodo,
-                editingTodo,
                 openAddTodo,
                 closeAddTodo,
+                editingTodo,
                 changeEditingTodo,
+                isOpenModal,
+                openModal,
+                closeModal,
             }}
         >
             {children}
