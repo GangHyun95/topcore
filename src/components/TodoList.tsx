@@ -1,13 +1,53 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Settings } from 'lucide-react';
 import AddTodo from './AddTodo';
 
-export default function TodoList() {
-    const [todos, setTodos] = useState([
-        { id: 1, text: '장보기', status: 'idle' },
-        { id: 2, text: '공부', status: 'in process' },
-        { id: 3, text: '과제', status: 'done' },
-    ]);
+type Props = {
+    isAddTodo: boolean;
+    openAddTodo: () => void;
+    closeAddTodo: () => void;
+};
+
+export type TodoType = {
+    id: number;
+    text: string;
+    status: string;
+};
+
+export default function TodoList({
+    isAddTodo,
+    openAddTodo,
+    closeAddTodo,
+}: Props) {
+    const [openMenuId, setOpenMenuId] = useState<number | null>(null);
+    const [todos, setTodos] = useState<TodoType[]>([]);
+    const [editingTodo, setEditingTodo] = useState<TodoType | null>(null);
+
+    const toggleMenu = (id: number) => {
+        setOpenMenuId((prev) => (prev === id ? null : id));
+    };
+
+    const closeMenu = () => setOpenMenuId(null);
+
+    const handleAdd = (todo: TodoType) => {
+        if (editingTodo) {
+            setTodos((prev) =>
+                prev.map((t) => (t.id === editingTodo.id ? todo : t))
+            );
+            setEditingTodo(null);
+        } else {
+            setTodos((prev) => [...prev, todo]);
+        }
+    };
+
+    const handleEdit = (todo: TodoType) => {
+        setEditingTodo(todo);
+        openAddTodo();
+    };
+
+    const handleDelete = (deleted: TodoType) =>
+        setTodos(todos.filter((todo) => todo.id !== deleted.id));
+
     return (
         <section className='flex h-full min-h-0 flex-col'>
             <ul className='space-y-4 flex-auto overflow-y-auto'>
@@ -37,13 +77,55 @@ export default function TodoList() {
                         >
                             {item.status}
                         </span>
-                        <button className='flex justify-center items-cente text-gray-600 hover:text-black hover:scale-110 transition-transform duration-200'>
-                            <Settings />
-                        </button>
+                        <div className='flex justify-center items-center relative'>
+                            <button
+                                className='text-gray-600 hover:text-black hover:scale-110 transition-transform duration-200'
+                                onClick={() => toggleMenu(item.id)}
+                            >
+                                <Settings />
+                            </button>
+
+                            {openMenuId === item.id && (
+                                <div className='absolute top-full right-0 w-40 bg-white shadow-lg rounded-lg border border-gray-200 z-10'>
+                                    <ul className='text-gray-700'>
+                                        <li
+                                            className='px-4 py-2 hover:bg-gray-100 cursor-pointer'
+                                            onClick={() => {
+                                                handleEdit(item);
+                                                closeMenu();
+                                            }}
+                                        >
+                                            변경하기
+                                        </li>
+                                        <li
+                                            className='px-4 py-2 hover:bg-gray-100 cursor-pointer'
+                                            onClick={() => {
+                                                const confirmed =
+                                                    window.confirm(
+                                                        '삭제하시겠습니까?'
+                                                    );
+                                                if (confirmed) {
+                                                    handleDelete(item);
+                                                }
+                                                closeMenu();
+                                            }}
+                                        >
+                                            삭제하기
+                                        </li>
+                                    </ul>
+                                </div>
+                            )}
+                        </div>
                     </li>
                 ))}
             </ul>
-            <AddTodo />
+            {isAddTodo && (
+                <AddTodo
+                    onAdd={handleAdd}
+                    onClose={closeAddTodo}
+                    editingTodo={editingTodo}
+                />
+            )}
         </section>
     );
 }
