@@ -6,7 +6,6 @@ import {
     SelectGroup,
     SelectItem,
     SelectTrigger,
-    SelectValue,
 } from '../components/ui/select';
 import { Input } from '../components/ui/input';
 import { TodoType, useTodoContext } from '../context/TodoContext';
@@ -80,10 +79,10 @@ export default function AddTodo() {
                     onValueChange={(value: string) => setStatus(value)}
                 >
                     <SelectTrigger>
-                        <SelectValue />
+                        <span>{status.toUpperCase()}</span>
                     </SelectTrigger>
                     <SelectContent>
-                        <SelectGroup>
+                        <SelectGroup className='uppercase'>
                             <SelectItem value='idle'>idle</SelectItem>
                             <SelectItem value='in process'>
                                 in process
