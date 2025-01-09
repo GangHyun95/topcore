@@ -56,7 +56,7 @@ export default function AddTodo() {
 
     return (
         <form onSubmit={handleSubmit} className='w-full py-4 bg-neutral-50'>
-            <div className='grid grid-cols-[2fr_4fr_4fr_2fr] items-center text-center gap-3'>
+            <div className='grid grid-cols-[1fr_4fr_1.5fr_1fr] items-center text-center gap-3'>
                 <button
                     type='button'
                     className='flex justify-center items-center w-8 h-8 bg-neutral-200 hover:bg-neutral-300 rounded-lg hover:scale-110 transition-transform duration-200 justify-self-center'
