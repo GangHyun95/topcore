@@ -24,7 +24,7 @@ export default function Todo({
 
     return (
         <li className='grid grid-cols-4 items-center text-center'>
-            <span>{index + 1}</span>
+            <span>{String(index + 1).padStart(2, '0')}</span>
             <span>
                 {todo.text.length > 16
                     ? `${todo.text.slice(0, 16)}...`
